@@ -5,7 +5,6 @@
 
 from requests import Session
 import json
-import errors
 
 class monicaPoint:
   def __init__(self, info={}):
@@ -84,13 +83,13 @@ class monicaServer:
   
   def addPoints(self, points=[]):
     if len(points) > 0:
-      for i in xrange(0, len(points)):
+      for i in range(0, len(points)):
         self.addPoint(points[i])
     return self
 
   def getPointByName(self, pointName=None):
     if pointName is not None:
-      for i in xrange(0, len(self.points)):
+      for i in range(0, len(self.points)):
         if (self.points[i].getPointName() == pointName):
           return self.points[i]
     return None
@@ -110,7 +109,7 @@ class monicaServer:
              'points': ";".join(allPointNames) }
     response = self.__comms(data)
     if response is not None and "pointData" in response:
-      for i in xrange(0, len(response['pointData'])):
+      for i in range(0, len(response['pointData'])):
         if response['pointData'][i]['pointName'] is not None:
           point = self.getPointByName(response['pointData'][i]['pointName'])
           point.setValue(response['pointData'][i]['value'])
@@ -120,3 +119,13 @@ class monicaServer:
     return False
 
 serverInstance = None
+
+def initialiseServerInstance(*args):
+  global serverInstance
+  if serverInstance is None:
+    serverInstance = monicaServer()
+  return serverInstance
+
+def server():
+  global serverInstance
+  return serverInstance

@@ -25,7 +25,7 @@ class ArgumentError(StatusError):
             (self.arg, self.routine, self.message))
 
 class PixelError(StatusError):
-  ## Exception raised when a pixel passed to a funciton is
+  ## Exception raised when a pixel passed to a function is
   ## not valid in some way.
   ## Attributes:
   ##     routine: the name of the routine called
