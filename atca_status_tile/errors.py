@@ -40,5 +40,21 @@ class PixelError(StatusError):
 
   def __str__(self):
     return ("PixelError: in routine %s, pixel (%d, %d), %s" %
-            self.routine, self.x, self.y, self.message)
+            (self.routine, self.x, self.y, self.message))
   
+class FunctionError(StatusError):
+  ## Exception raised when a function is supposed to be called
+  ## but one was not supplied.
+  ## Attributes:
+  ##     routine: the name of the routine called
+  ##     callback: which function was to be called
+  ##     message: explanation of the problem
+  def __init__(self, routine, callback, message):
+    self.routine = routine
+    self.callback = callback
+    self.message = message
+
+    def __str__(self):
+      return ("FunctionError: could not call the %s callback from %s, %s" %
+              (self.callback, self.routine, self.message))
+    

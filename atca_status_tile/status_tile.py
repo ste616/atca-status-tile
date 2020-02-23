@@ -64,4 +64,17 @@ class StatusTile:
       self.lastBrightness = brightness
       
     for i in range(0, len(self.indicators)):
-      
+      self.indicators[i].indicator.refresh()
+      pixelColours = self.indicators[i].indicator.getColours()
+      if len(pixelColours) == 1:
+        # Just one colour for all the pixels.
+        # Convert RGB to HS.
+        ( hue, saturation ) = ( 1, 1 )
+        # Set the pixels.
+        for j in range(len(self.indicators[i].pixels)):
+          self.indicators[i].pixels[j] = ( hue, saturation, brightness, kelvin )
+
+    # Now update the tile.
+    set_tile_colours()
+    
+    
