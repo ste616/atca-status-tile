@@ -12,11 +12,11 @@ def xy2pix(x=0, y=0):
   return p
 
 class StatusTile:
-  def __init__(self, tileNumber=None):
-    self.tileNumer = tileNumber
+  def __init__(self, tile=None, tileNumber=None):
+    self.tileNumber = tileNumber
     self.indicators = []
     self.pixelsUsed = [ False ] * 64
-    self.lastBrightness = 32768
+    self.lastBrightness = 65535 ## Full brightness.
 
   def addIndicator(self, indicator=None, x=[], y=[]):
     p = []
@@ -74,6 +74,11 @@ class StatusTile:
         for j in range(len(self.indicators[i].pixels)):
           self.indicators[i].pixels[j] = ( hue, saturation, brightness, kelvin )
 
+    ## Blank out all the pixels that aren't used.
+    #for i in range(0, len(self.pixelsUsed)):
+    #  if (self.pixelsUser[i] == False):
+        
+          
     # Now update the tile.
     set_tile_colours()
     
