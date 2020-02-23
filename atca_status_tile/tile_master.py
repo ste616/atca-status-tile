@@ -17,7 +17,9 @@ class TileMaster:
     if self.lifxTile is not None:
       self.colours = self.lifxTile.get_tilechain_colors()
     # Work out the temperature and brightness.
-    
+    if (self.colours is not None):
+      for i in range(0, len(self.colours)):
+        
     return self.colours
 
   def getTileValues(self, tileNumber=None):
