@@ -13,6 +13,7 @@ def xy2pix(x=0, y=0):
 
 class StatusTile:
   def __init__(self, tile=None, tileNumber=None):
+    self.tileMaster = tile
     self.tileNumber = tileNumber
     self.indicators = []
     self.pixelsUsed = [ False ] * 64
