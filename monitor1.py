@@ -6,12 +6,13 @@ from time import sleep
 
 ## Routine to turn a block status into a colour.
 def blockStatusColour(blockStatus=None):
+  print ("DEBUG: the block status is %s" % blockStatus)
   if (blockStatus is not None):
     if (blockStatus == "ONLINE"):
-      return ( 0, 255, 0 )
+      return [ ( 0, 255, 0 ) ]
     else:
-      return ( 255, 0, 0 )
-  return ( 0, 0, 0 )
+      return [ ( 255, 0, 0 ) ]
+  return [ ( 0, 0, 0 ) ]
 
 def main():
   ## Get the tile we want to control.

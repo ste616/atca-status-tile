@@ -106,11 +106,12 @@ class StatusTile:
       if len(pixelColours) == 1:
         # Just one colour for all the pixels.
         # Convert RGB to HS.
-        (hue, saturation, value) = rgb2hsv(pixelColours)
+        (hue, saturation, value) = rgb2hsv(*pixelColours[0])
         # Set the pixels.
         for j in range(len(self.indicators[i]["pixels"])):
           self.colours[self.indicators[i]["pixels"][j]] = (
-            hue, saturation, brightness * value, temperature )
+            (hue / 360) * 65535, 65535 * saturation,
+            brightness * value, temperature )
 
     ## Blank out all the pixels that aren't used.
     for i in range(0, len(self.pixelsUsed)):
@@ -118,6 +119,8 @@ class StatusTile:
         self.colours[i] = ( 0, 0, 0, self.lastTemperature )
           
     # Now update the tile.
+    print ("DEBUG: tile %d colours is now:", self.tileNumber)
+    print (self.colours)
     self.tileMaster.setTileColours(tileNumber=self.tileNumber,
                                    colours=self.colours)
     
