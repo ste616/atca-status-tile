@@ -11,13 +11,44 @@ def xy2pix(x=0, y=0):
   p = x + 8 * y
   return p
 
+## Conversion between RGB and HSV.
+def rgb2hsv(r, g, b):
+  ## Change to fractional values.
+  rf = r / 255.
+  gf = g / 255.
+  bf = b / 255.
+
+  ## Get the maximum and minimum colour values.
+  cmax = max(rf, gf, bf)
+  cmin = min(rf, gf, bf)
+  cdelta = cmax - cmin
+
+  ## Calculate the hue.
+  h = 0
+  if cdelta > 0:
+    if cmax == rf:
+      h = 60. * (((gf - bf) / cdelta) % 6)
+    elif cmax == gf:
+      h = 60. * (((bf - rf) / cdelta) + 2.)
+    elif cmax == bf:
+      h = 60. * (((rf - gf) / cdelta) + 4.)
+  ## Calculate the saturation.
+  s = 0
+  if cmax != 0:
+    s = cdelta / cmax
+  ## Calculate the fractional brightness (value).
+  v = cmax
+  return (h, s, v)
+  
 class StatusTile:
   def __init__(self, tile=None, tileNumber=None):
     self.tileMaster = tile
     self.tileNumber = tileNumber
     self.indicators = []
+    self.colours = [ ( 0, 0, 0, 0 ) ] * 64
     self.pixelsUsed = [ False ] * 64
     self.lastBrightness = 65535 ## Full brightness.
+    self.lastTemperature = 3500 ## Default colour temperature.
 
   def addIndicator(self, indicator=None, x=[], y=[]):
     p = []
@@ -57,12 +88,16 @@ class StatusTile:
       pixelsUsed[i] = True
     return self
 
-  def refresh(self, brightness=None):
+  def refresh(self, brightness=None, temperature=None):
     ## Called to update the pixel values.
     if brightness is None:
       brightness = self.lastBrightness
     else:
       self.lastBrightness = brightness
+    if temperature is None:
+      temperature = self.lastTemperature
+    else:
+      self.lastTemperature = temperature
       
     for i in range(0, len(self.indicators)):
       self.indicators[i].indicator.refresh()
@@ -70,17 +105,19 @@ class StatusTile:
       if len(pixelColours) == 1:
         # Just one colour for all the pixels.
         # Convert RGB to HS.
-        ( hue, saturation ) = ( 1, 1 )
+        (hue, saturation, value) = rgb2hsv(pixelColours)
         # Set the pixels.
         for j in range(len(self.indicators[i].pixels)):
-          self.indicators[i].pixels[j] = ( hue, saturation, brightness, kelvin )
+          self.colours[self.indicators[i].pixels[j]] = (
+            hue, saturation, brightness * value, temperature )
 
     ## Blank out all the pixels that aren't used.
-    #for i in range(0, len(self.pixelsUsed)):
-    #  if (self.pixelsUser[i] == False):
-        
+    for i in range(0, len(self.pixelsUsed)):
+      if (self.pixelsUsed[i] == False):
+        self.colours[i] = ( 0, 0, 0, self.lastTemperature )
           
     # Now update the tile.
-    set_tile_colours()
+    self.tileMaster.setTileColours(tileNumber=self.tileNumber,
+                                   colours=self.colours)
     
     

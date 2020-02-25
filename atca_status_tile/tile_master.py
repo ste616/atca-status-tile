@@ -6,6 +6,7 @@
 
 from .errors import NotFoundError, TileCommunicationError, ArgumentError, TileError
 from .status_tile import StatusTile
+from .repeated_timer import RepeatedTimer
 
 class TileMaster:
   def __init__(self, lifxTile=None, refreshTime=10):
@@ -15,6 +16,7 @@ class TileMaster:
     self.brightness = None
     self.colours = None
     self.tiles = None
+    self.timer = RepeatedTimer(refreshTime, self.refresh)
 
   def getStatus(self):
     ## This gets the current values of the tile pixels.
@@ -86,3 +88,37 @@ class TileMaster:
     self.tiles[tileNumber] = StatusTile(tile=self,
                                         tileNumber=tileNumber)
     return self.tiles[tileNumber]
+
+  def refresh(self):
+    print ("DEBUG: TileMaster is refreshing")
+    if self.tiles is None:
+      raise NotFoundError(routine="TileMaster.refresh",
+                          expected="tiles",
+                          message="No tiles configured in tile set")
+    for i in range(0, len(self.tiles)):
+      if self.tiles[i] is not None:
+        self.tiles[i].refresh(brightness=self.brightness)
+
+  def setTileColours(self, tileNumber=None, colours=None):
+    if self.colours is None:
+      raise NotFoundError(routine="TileMaster.setTileColours",
+                          expected="colours",
+                          message="no colours returned from tile set")
+    if (tileNumber is None or tileNumber < 0 or
+        tileNumber > len(self.tiles)):
+      raise ArgumentError(routine="TileMaster.setTileColours",
+                          arg="tileNumber",
+                          message="argument was not supplied or is out of range")
+    if colours is None or len(colours) != 64:
+      raise ArgumentError(routine="TileMaster.setTileColours",
+                          arg="colours",
+                          message="argument was not supplied or is wrong size")
+    ## We can set these colours.
+    self.colours[tileNumber] = colours
+    self.lifxTile.set_tile_colours(start_index=tileNumber,
+                                   colors=self.colours[tileNumber],
+                                   tile_count=1)
+
+  def stop(self):
+    ## Stop automatically updating.
+    self.timer.stop()
