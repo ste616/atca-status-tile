@@ -11,4 +11,5 @@ from .monica import *
 from .status_indicator import *
 from .status_tile import *
 from .tile_master import *
+from .monica_point import *
 

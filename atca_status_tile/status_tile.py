@@ -72,7 +72,7 @@ class StatusTile:
           message="pixel value out of range 0 <= v < 8"
           )
       tp = xy2pix(x[i], y[i])
-      if (self.pixelsUsed[p] == True):
+      if (self.pixelsUsed[tp] == True):
         raise PixelError(
           routine="StatusTile.addIndicator",
           x=x[i], y=y[i],
@@ -81,11 +81,11 @@ class StatusTile:
       p.append(tp)
     ## If we get here, this indicator can be added to our list.
     self.indicators.append({
-      indicator: indicator,
-      pixels: tp
+      "indicator": indicator,
+      "pixels": p
       })
     for i in p:
-      pixelsUsed[i] = True
+      self.pixelsUsed[i] = True
     return self
 
   def refresh(self, brightness=None, temperature=None):
@@ -101,15 +101,15 @@ class StatusTile:
       self.lastTemperature = temperature
       
     for i in range(0, len(self.indicators)):
-      self.indicators[i].indicator.refresh()
-      pixelColours = self.indicators[i].indicator.getColours()
+      self.indicators[i]["indicator"].refresh()
+      pixelColours = self.indicators[i]["indicator"].getColours()
       if len(pixelColours) == 1:
         # Just one colour for all the pixels.
         # Convert RGB to HS.
         (hue, saturation, value) = rgb2hsv(pixelColours)
         # Set the pixels.
-        for j in range(len(self.indicators[i].pixels)):
-          self.colours[self.indicators[i].pixels[j]] = (
+        for j in range(len(self.indicators[i]["pixels"])):
+          self.colours[self.indicators[i]["pixels"][j]] = (
             hue, saturation, brightness * value, temperature )
 
     ## Blank out all the pixels that aren't used.

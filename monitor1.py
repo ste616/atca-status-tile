@@ -23,14 +23,24 @@ def main():
   ## Switch on the tiles.
   master.powerOn()
 
+  ## Start the MoniCA machinery.
+  server = atca.initialiseServerInstance()
+  
   ## Tile 1: CABB block indicators.
   tile1 = master.addTile(tileNumber=0)
-  
+  block1 = atca.MoniCAPoint(pointName="caccc.cabb.correlator.Block01",
+                       monicaServer=server)
+  block1Indicator = atca.StatusIndicator(computeFunction=block1.getValue,
+                                         colourFunction=blockStatusColour)
+  tile1.addIndicator(indicator=block1Indicator,
+                     x=[0, 1], y=[0, 0])
 
   ## Sit here and let the master do its work.
   try:
     while(True):
-      sleep(100)
+      server.updatePoints()
+      sleep(2)
+      
   finally:
     master.stop()
       

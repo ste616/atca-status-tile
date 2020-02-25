@@ -16,7 +16,7 @@ class StatusIndicator:
   def refresh(self):
     # Work out the current state and new colour.
     if (self.computeFunction is not None and self.colourFunction is not None):
-      newState = computeFunction()
+      newState = self.computeFunction()
       self.state = newState
 
       newColour = self.colourFunction(self.state)
