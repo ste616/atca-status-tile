@@ -89,6 +89,7 @@ class StatusTile:
     return self
 
   def refresh(self, brightness=None, temperature=None):
+    print("DEBUG: tile %d being refreshed" % self.tileNumber)
     ## Called to update the pixel values.
     if brightness is None:
       brightness = self.lastBrightness

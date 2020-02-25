@@ -17,8 +17,10 @@ class TileMaster:
     self.colours = None
     self.tiles = None
     self.timer = RepeatedTimer(refreshTime, self.refresh)
+    self.getStatus()
 
   def getStatus(self):
+    print("DEBUG: tile master getting tile status")
     ## This gets the current values of the tile pixels.
     if self.lifxTile is not None:
       self.colours = self.lifxTile.get_tilechain_colors()
@@ -80,11 +82,12 @@ class TileMaster:
       raise ArgumentError(routine="TileMaster.addTile",
                           arg="tileNumber",
                           message="argument was not supplied or is out of range")
-    if self.tile[tileNumber] is not None:
+    if self.tiles[tileNumber] is not None:
       raise TileError(routine="TileMaster.addTile",
                       tileNumber=tileNumber,
                       message="tile was already allocated")
     ## We can allocate this tile.
+    print ("DEBUG: adding tile for %d" % tileNumber)
     self.tiles[tileNumber] = StatusTile(tile=self,
                                         tileNumber=tileNumber)
     return self.tiles[tileNumber]
@@ -95,11 +98,16 @@ class TileMaster:
       raise NotFoundError(routine="TileMaster.refresh",
                           expected="tiles",
                           message="No tiles configured in tile set")
+    print ("DEBUG: TileMaster knows about %d tiles" % len(self.tiles))
     for i in range(0, len(self.tiles)):
+      print ("DEBUG: Checking tile %d" % i)
       if self.tiles[i] is not None:
-        self.tiles[i].refresh(brightness=self.brightness)
+        print ("DEBUG: found a usable tile, refreshing")
+        self.tiles[i].refresh(brightness=self.brightness,
+                              temperature=self.temperature)
 
   def setTileColours(self, tileNumber=None, colours=None):
+    print("DEBUG: tile colours being set by master")
     if self.colours is None:
       raise NotFoundError(routine="TileMaster.setTileColours",
                           expected="colours",
@@ -115,9 +123,9 @@ class TileMaster:
                           message="argument was not supplied or is wrong size")
     ## We can set these colours.
     self.colours[tileNumber] = colours
-    self.lifxTile.set_tile_colours(start_index=tileNumber,
-                                   colors=self.colours[tileNumber],
-                                   tile_count=1)
+    self.lifxTile.set_tile_colors(start_index=tileNumber,
+                                  colors=self.colours[tileNumber],
+                                  tile_count=1)
 
   def stop(self):
     ## Stop automatically updating.

@@ -14,13 +14,18 @@ def blockStatusColour(blockStatus=None):
   return ( 0, 0, 0 )
 
 def main():
+  ## Get the tile we want to control.
   lan = LifxLAN()
   atcaTile = lan.get_tilechain_lights()[0]
-  print (atcaTile.get_power())
-  atcaTile.set_power(not atcaTile.get_power())
 
+  ## Initialise the tile master.
   master = atca.TileMaster(lifxTile=atcaTile)
-  print (master.getTileValues(tileNumber=0))
+  ## Switch on the tiles.
+  master.powerOn()
+
+  ## Tile 1: CABB block indicators.
+  tile1 = master.addTile(tileNumber=0)
+  
 
   ## Sit here and let the master do its work.
   try:
