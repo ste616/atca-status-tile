@@ -29,7 +29,7 @@ def main():
   
   ## Tile 1: CABB block indicators.
   tile1 = master.addTile(tileNumber=0)
-  for i in range(1, 32):
+  for i in range(1, 37):
     if (i > 16 and i < 21):
       continue
     pointName = "caccc.cabb.correlator.Block%02d" % i
