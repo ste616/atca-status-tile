@@ -29,12 +29,32 @@ def main():
   
   ## Tile 1: CABB block indicators.
   tile1 = master.addTile(tileNumber=0)
-  block1 = atca.MoniCAPoint(pointName="caccc.cabb.correlator.Block01",
-                       monicaServer=server)
-  block1Indicator = atca.StatusIndicator(computeFunction=block1.getValue,
-                                         colourFunction=blockStatusColour)
-  tile1.addIndicator(indicator=block1Indicator,
-                     x=[0, 1], y=[0, 0])
+  for i in range(1, 32):
+    if (i > 16 and i < 21):
+      continue
+    pointName = "caccc.cabb.correlator.Block%02d" % i
+    block = atca.MoniCAPoint(pointName=pointName,
+                             monicaServer=server)
+    blockIndicator = atca.StatusIndicator(computeFunction=block.getValue,
+                                          colourFunction=blockStatusColour)
+    offblock = 0
+    ylevel = 0
+    if i < 9:
+      offblock = 1
+      ylevel = 0
+    elif i < 17:
+      offblock = 9
+      ylevel = 2
+    elif i < 29:
+      offblock = 21
+      ylevel = 4
+    else:
+      offblock = 29
+      ylevel = 6
+    x = [ i - offblock, i - offblock ]
+    y = [ ylevel, ylevel + 1 ]
+    tile1.addIndicator(indicator=blockIndicator,
+                       x=x, y=y)
 
   ## Sit here and let the master do its work.
   try:
