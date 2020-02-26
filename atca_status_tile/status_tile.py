@@ -5,6 +5,7 @@
 # indicators.
 
 from .errors import ArgumentError, PixelError
+from .repeated_timer import RepeatedTimer
 
 ## A mapper between (x,y) and pixel number.
 def xy2pix(x=0, y=0):
@@ -49,6 +50,10 @@ class StatusTile:
     self.pixelsUsed = [ False ] * 64
     self.lastBrightness = 65535 ## Full brightness.
     self.lastTemperature = 3500 ## Default colour temperature.
+    self.testMode = False
+    self.testTimer = None
+    self.testPixel = 0
+    self.testColours = [ ( 0, 0, 0, 3500 ) ] * 64
 
   def addIndicator(self, indicator=None, x=[], y=[]):
     p = []
@@ -89,6 +94,8 @@ class StatusTile:
     return self
 
   def refresh(self, brightness=None, temperature=None):
+    if self.testMode == True:
+      return
     print("DEBUG: tile %d being refreshed" % self.tileNumber)
     ## Called to update the pixel values.
     if brightness is None:
@@ -123,5 +130,40 @@ class StatusTile:
     print (self.colours)
     self.tileMaster.setTileColours(tileNumber=self.tileNumber,
                                    colours=self.colours)
+    
+  def startTest(self):
+    print ("DEBUG: entering test mode for tile %d",
+           self.tileNumber)
+    if self.testMode == True:
+      # Already running.
+      return
+    ## Blank the tile.
+    self.tileMaster.setTileColours(tileNumber=self.tileNumber,
+                                   colours=self.testColours)
+    ## Set up the timer.
+    self.testTimer = RepeatedTimer(1, self.test)
+    self.testMode = True
+    return self
+
+  def test(self):
+    if self.testPixel == 64:
+      ## Test is finished.
+      self.testMode = False
+      self.testTimer.stop()
+      ## Go back to the old colours.
+      self.tileMaster.setTileColours(tileNumber=self.tileNumber,
+                                     colours=self.colours)
+    ## Unlight the previous pixel.
+    if (self.testPixel > 0):
+      self.testColours[self.testPixel - 1] = ( 0, 0, self.lastBrightness,
+                                               self.lastTemperature )
+    if (self.textPixel < 64):
+      ## Light up the new pixel.
+      self.testColours[self.testPixel] = ( 120, 65535, 65535,
+                                           self.lastTemperature )
+    self.tileMaster.setTileColours(tileNumber=self.tileNumber,
+                                   colours=self.testColours)
+    ## Increment the text pixel for next time.
+    self.testPixel += 1
     
     

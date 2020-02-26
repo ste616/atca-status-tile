@@ -56,6 +56,11 @@ def main():
     tile1.addIndicator(indicator=blockIndicator,
                        x=x, y=y)
 
+  ## Tile 2: Lightning tile.
+  tile2 = master.addTile(tileNumber=1)
+  ## Set this tile to test mode.
+  tile2.startTest()
+  
   ## Sit here and let the master do its work.
   try:
     while(True):
