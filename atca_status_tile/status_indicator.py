@@ -5,6 +5,7 @@
 # based on some function.
 
 from .errors import FunctionError
+import types
 
 class StatusIndicator:
   def __init__(self, computeFunction=None, colourFunction=None):
@@ -16,7 +17,10 @@ class StatusIndicator:
   def refresh(self):
     # Work out the current state and new colour.
     if (self.computeFunction is not None and self.colourFunction is not None):
-      newState = self.computeFunction()
+      if isinstance(self.computeFunction, list):
+        newState = list(map(lambda x: x(), self.computeFunction))
+      else:
+        newState = self.computeFunction()
       self.state = newState
 
       newColour = self.colourFunction(self.state)

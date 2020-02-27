@@ -100,7 +100,10 @@ class monicaServer:
 
     session = Session()
     url = self.protocol + "://" + self.webserverName + "/" + self.webserverPath
-    postResponse = session.post( url=url, data=data )
+    try:
+      postResponse = session.post( url=url, data=data )
+    except requests.exceptions.ConnectionError:
+      print ("WHY YOU NO CONNECT?")
     return json.loads(postResponse.text)
 
   def updatePoints(self):

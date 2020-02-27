@@ -20,7 +20,7 @@ class TileMaster:
     self.getStatus()
 
   def getStatus(self):
-    print("DEBUG: tile master getting tile status")
+    #print("DEBUG: tile master getting tile status")
     ## This gets the current values of the tile pixels.
     if self.lifxTile is not None:
       self.colours = self.lifxTile.get_tilechain_colors()
@@ -87,7 +87,7 @@ class TileMaster:
                       tileNumber=tileNumber,
                       message="tile was already allocated")
     ## We can allocate this tile.
-    print ("DEBUG: adding tile for %d" % tileNumber)
+    #print ("DEBUG: adding tile for %d" % tileNumber)
     self.tiles[tileNumber] = StatusTile(tile=self,
                                         tileNumber=tileNumber)
     return self.tiles[tileNumber]
@@ -98,16 +98,16 @@ class TileMaster:
       raise NotFoundError(routine="TileMaster.refresh",
                           expected="tiles",
                           message="No tiles configured in tile set")
-    print ("DEBUG: TileMaster knows about %d tiles" % len(self.tiles))
+    #print ("DEBUG: TileMaster knows about %d tiles" % len(self.tiles))
     for i in range(0, len(self.tiles)):
-      print ("DEBUG: Checking tile %d" % i)
+      #print ("DEBUG: Checking tile %d" % i)
       if self.tiles[i] is not None:
-        print ("DEBUG: found a usable tile, refreshing")
+        #print ("DEBUG: found a usable tile, refreshing")
         self.tiles[i].refresh(brightness=self.brightness,
                               temperature=self.temperature)
 
   def setTileColours(self, tileNumber=None, colours=None):
-    print("DEBUG: tile colours being set by master")
+    #print("DEBUG: tile colours being set by master")
     if self.colours is None:
       raise NotFoundError(routine="TileMaster.setTileColours",
                           expected="colours",

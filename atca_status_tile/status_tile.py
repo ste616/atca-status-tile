@@ -96,7 +96,7 @@ class StatusTile:
   def refresh(self, brightness=None, temperature=None):
     if self.testMode == True:
       return
-    print("DEBUG: tile %d being refreshed" % self.tileNumber)
+    #print("DEBUG: tile %d being refreshed" % self.tileNumber)
     ## Called to update the pixel values.
     if brightness is None:
       brightness = self.lastBrightness
@@ -126,14 +126,14 @@ class StatusTile:
         self.colours[i] = ( 0, 0, 0, self.lastTemperature )
           
     # Now update the tile.
-    print ("DEBUG: tile %d colours is now:", self.tileNumber)
-    print (self.colours)
+    #print ("DEBUG: tile %d colours is now:", self.tileNumber)
+    #print (self.colours)
     self.tileMaster.setTileColours(tileNumber=self.tileNumber,
                                    colours=self.colours)
     
   def startTest(self):
-    print ("DEBUG: entering test mode for tile %d",
-           self.tileNumber)
+    #print ("DEBUG: entering test mode for tile %d",
+    #       self.tileNumber)
     if self.testMode == True:
       # Already running.
       return
