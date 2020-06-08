@@ -9,7 +9,7 @@ import atca_status_tile.colours as colours
 
 ## Routine to take a lightning count and turn it into
 ## the appropriate colour.
-def lightningColour(lightningStatus=None):
+def lightningColour(lightningStatus=None, parentTile=None):
   if (lightningStatus is not None):
     count = int(lightningStatus)
     if count < 1:
@@ -19,7 +19,7 @@ def lightningColour(lightningStatus=None):
       ## Some lightning, yellow.
       return colours.YELLOW
     if count < 10:
-      # Quite a few strikes, orange.
+      ## Quite a few strikes, orange.
       return colours.ORANGE
     ## Lots of strikes, red.
     return colours.RED
@@ -27,7 +27,7 @@ def lightningColour(lightningStatus=None):
 
 ## Routine to take the lightning threat level and
 ## turn it into the appropriate colour.
-def threatLevelColour(threatStatus=None):
+def threatLevelColour(threatStatus=None, parentTile=None):
   if (threatStatus is not None):
     threatLevel = int(threatStatus)
     if threatLevel == 0:
@@ -41,33 +41,43 @@ def threatLevelColour(threatStatus=None):
       return colours.YELLOW
     if threatLevel == 3:
       ## Enable generators, orange.
+      ## Call for attention at this point.
+      if (parentTile is not None):
+        parentTile.callForAttention()
       return colours.ORANGE
     if threatlevel == 4:
       ## Storm stow, red.
+      if (parentTile is not None):
+        parentTile.callForAttention()
       return colours.RED
     return colours.BLANK
 
 ## Routine that determines if mains is available and
 ## colours this state.
-def powerStatusColour(powerStatus=None):
+def powerStatusColour(powerStatus=None, parentTile=None):
   if (powerStatus is not None):
     if powerStatus == "true":
       ## Mains is available, green.
       return colours.GREEN
     ## Mains is not available, red.
+    if (parentTile is not None):
+      parentTile.callForAttention()
     return colours.RED
   return colours.BLANK
 
 ## Routine to return a colour depending on whether
 ## the generator is running or has experienced a
 ## critical error.
-def generatorStatusColour(generatorStatus=None):
+def generatorStatusColour(generatorStatus=None, parentTile=None):
   #print ("DEBUG: generator status called")
   #print (generatorStatus)
   powerSource = generatorStatus[0]
   generatorFailed = generatorStatus[1]
   if generatorFailed == "true":
     ## Generator has a critical error, red.
+    ## Really want people to notice this.
+    if (parentTile is not None):
+      parentTile.callForAttention()
     return colours.RED
   if powerSource == "GENERATOR":
     ## Running on generator, blue.

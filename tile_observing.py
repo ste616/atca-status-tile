@@ -8,7 +8,7 @@ from atca_status_tile import MoniCAPoint, StatusIndicator
 import atca_status_tile.colours as colours
 
 ## Routine which returns a colour if the antenna is stowed or parked.
-def antennaStowedParked(servoStatus=None):
+def antennaStowedParked(servoStatus=None, parentTile=None):
   if (servoStatus == "STOWED"):
     ## Return yellow.
     return colours.YELLOW
@@ -19,7 +19,7 @@ def antennaStowedParked(servoStatus=None):
   return colours.BLANK
 
 ## Routine which returns a colour if the antenna is slewing.
-def antennaSlewing(servoStatus=None):
+def antennaSlewing(servoStatus=None, parentTile=None):
   if (servoStatus == "SLEWING"):
     ## Return yellow.
     return colours.YELLOW
@@ -27,7 +27,7 @@ def antennaSlewing(servoStatus=None):
   return colours.BLANK
 
 ## Routine which returns a colour if the antenna is tracking.
-def antennaTracking(servoStatus=None):
+def antennaTracking(servoStatus=None, parentTile=None):
   if (servoStatus == "TRACKING"):
     ## Return green.
     return colours.GREEN
@@ -35,15 +35,17 @@ def antennaTracking(servoStatus=None):
   return colours.BLANK
 
 ## Routine which returns a colour if the antenna has a drive error.
-def antennaError(servoStatus=None):
+def antennaError(servoStatus=None, parentTile=None):
   if (servoStatus == "DRIVE_ERROR"):
     ## Return red.
+    if (parentTile is not None):
+      parentTile.callForAttention()
     return colours.RED
   ## Return blank.
   return colours.BLANK
 
 ## Routine which returns a colour based on the current antenna wrap.
-def antennaWrap(servoStatus=None):
+def antennaWrap(servoStatus=None, parentTile=None):
   if (servoStatus == "SOUTH"):
     ## Return blue.
     return colours.BLUE
@@ -54,7 +56,7 @@ def antennaWrap(servoStatus=None):
   return colours.BLANK
 
 ## Routine to return a colour depending on the status of the servo.
-def caobsStatusColour(caobsStatus=None):
+def caobsStatusColour(caobsStatus=None, parentTile=None):
   if ((caobsStatus == "STOWED") or
       (caobsStatus == "PARKED")):
     ## Antenna is stowed, white.
@@ -76,6 +78,9 @@ def caobsStatusColour(caobsStatus=None):
     return colours.ORANGE
   if (caobsStatus == "IDLE"):
     ## Antenna isn't moving, blue.
+    ## Call for attention.
+    if (parentTile is not None):
+      parentTile.callForAttention()
     return colours.BLUE
   
   return colours.BLANK

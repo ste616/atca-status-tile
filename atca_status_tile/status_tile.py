@@ -54,6 +54,7 @@ class StatusTile:
     self.testTimer = None
     self.testPixel = 0
     self.testColours = [ ( 0, 0, 0, 3500 ) ] * 64
+    self.attentionRequired = False
 
   def addIndicator(self, indicator=None, x=[], y=[]):
     p = []
@@ -93,6 +94,11 @@ class StatusTile:
       self.pixelsUsed[i] = True
     return self
 
+  def callForAttention(self):
+    ## This method is called by a status indicator if the compute
+    ## or colour routines decide that a point needs attention.
+    self.attentionRequired = True
+  
   def refresh(self, brightness=None, temperature=None):
     if self.testMode == True:
       return
@@ -106,9 +112,21 @@ class StatusTile:
       temperature = self.lastTemperature
     else:
       self.lastTemperature = temperature
-      
+
+    self.attentionRequired = False
     for i in range(0, len(self.indicators)):
-      self.indicators[i]["indicator"].refresh()
+      ## Make a run through all the indicators first to see if they
+      ## need to call for attention.
+      self.indicators[i]["indicator"].refresh(parentTile=self)
+
+    ## Increase the brightness if attention is required.
+    if (self.attentionRequired):
+      brightness = 65535 ## Full brightness
+    else:
+      brightness = 16383 ## Quarter brightness
+
+    ## Now run through the indicators again and set the pixels.
+    for i in range(0, len(self.indicators)):
       pixelColours = self.indicators[i]["indicator"].getColours()
       if len(pixelColours) == 1:
         # Just one colour for all the pixels.

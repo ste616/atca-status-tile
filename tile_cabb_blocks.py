@@ -8,12 +8,15 @@ from atca_status_tile import MoniCAPoint, StatusIndicator
 import atca_status_tile.colours as colours
 
 ## Routine to turn a block status into a colour.
-def blockStatusColour(blockStatus=None):
+def blockStatusColour(blockStatus=None, parentTile=None):
   #print ("DEBUG: the block status is %s" % blockStatus)
   if (blockStatus is not None):
     if (blockStatus == "ONLINE"):
       return colours.GREEN
     else:
+      ## Call for attention as well.
+      if (parentTile is not None):
+        parentTile.callForAttention()
       return colours.RED
   return colours.BLANK
 

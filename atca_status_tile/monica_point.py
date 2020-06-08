@@ -12,7 +12,7 @@ class MoniCAPoint:
         self.monicaServer is not None):
       self.monicaServer.addPoint(pointName=self.pointName)
 
-  def getValue(self):
+  def getValue(self, parentTile=None):
     if (self.pointName is not None and
         self.monicaServer is not None):
       point = self.monicaServer.getPointByName(self.pointName)

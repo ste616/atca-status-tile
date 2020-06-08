@@ -14,16 +14,17 @@ class StatusIndicator:
     self.state = None
     self.colour = None
 
-  def refresh(self):
+  def refresh(self, parentTile=None):
     # Work out the current state and new colour.
     if (self.computeFunction is not None and self.colourFunction is not None):
       if isinstance(self.computeFunction, list):
-        newState = list(map(lambda x: x(), self.computeFunction))
+        newState = list(map(lambda x: x(parentTile=parentTile),
+                            self.computeFunction))
       else:
-        newState = self.computeFunction()
+        newState = self.computeFunction(parentTile=parentTile)
       self.state = newState
 
-      newColour = self.colourFunction(self.state)
+      newColour = self.colourFunction(self.state, parentTile=parentTile)
       self.colour = newColour
     else:
       if (self.computeFunction is None):
