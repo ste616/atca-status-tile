@@ -5,6 +5,7 @@
 # tiles into an indicator of nearby lightning and the power situation.
 
 from atca_status_tile import MoniCAPoint, StatusIndicator
+import atca_status_tile.colours as colours
 
 ## Routine to take a lightning count and turn it into
 ## the appropriate colour.
@@ -13,16 +14,16 @@ def lightningColour(lightningStatus=None):
     count = int(lightningStatus)
     if count < 1:
       ## No lightning, blank.
-      return [ ( 0, 0, 0 ) ]
+      return colours.BLANK
     if count < 3:
       ## Some lightning, yellow.
-      return [ ( 255, 255, 0 ) ]
+      return colours.YELLOW
     if count < 10:
       # Quite a few strikes, orange.
-      return [ ( 255, 128, 0 ) ]
+      return colours.ORANGE
     ## Lots of strikes, red.
-    return [ ( 255, 0, 0 ) ]
-  return [ ( 0, 0, 0 ) ]
+    return colours.RED
+  return colours.BLANK
 
 ## Routine to take the lightning threat level and
 ## turn it into the appropriate colour.
@@ -31,20 +32,20 @@ def threatLevelColour(threatStatus=None):
     threatLevel = int(threatStatus)
     if threatLevel == 0:
       ## No lightning, green.
-      return [ ( 0, 255, 0 ) ]
+      return colours.GREEN
     if threatLevel == 1:
       ## Some lightning, blue.
-      return [ ( 0, 0, 255 ) ]
+      return colours.BLUE
     if threatLevel == 2:
       ## Consider generators, yellow.
-      return [ ( 255, 255, 0 ) ]
+      return colours.YELLOW
     if threatLevel == 3:
       ## Enable generators, orange.
-      return [ ( 255, 128, 0 ) ]
+      return colours.ORANGE
     if threatlevel == 4:
       ## Storm stow, red.
-      return [ ( 255, 0, 0 ) ]
-    return [ ( 0, 0, 0 ) ]
+      return colours.RED
+    return colours.BLANK
 
 ## Routine that determines if mains is available and
 ## colours this state.
@@ -52,10 +53,10 @@ def powerStatusColour(powerStatus=None):
   if (powerStatus is not None):
     if powerStatus == "true":
       ## Mains is available, green.
-      return [ ( 0, 255, 0 ) ]
+      return colours.GREEN
     ## Mains is not available, red.
-    return [ ( 255, 0, 0 ) ]
-  return [ ( 0, 0, 0 ) ]
+    return colours.RED
+  return colours.BLANK
 
 ## Routine to return a colour depending on whether
 ## the generator is running or has experienced a
@@ -67,17 +68,17 @@ def generatorStatusColour(generatorStatus=None):
   generatorFailed = generatorStatus[1]
   if generatorFailed == "true":
     ## Generator has a critical error, red.
-    return [ ( 255, 0, 0 ) ]
+    return colours.RED
   if powerSource == "GENERATOR":
     ## Running on generator, blue.
-    return [ ( 0, 0, 255 ) ]
+    return colours.BLUE
   if powerSource == "mains":
     ## Running on mains, green.
-    return [ ( 0, 255, 0 ) ]
+    return colours.GREEN
   if powerSource == "SHARED_LOAD":
     ## Going between mains and generator, yellow.
-    return [ ( 255, 255, 0 ) ]
-  return [ ( 0, 0, 0 ) ]
+    return colours.YELLOW
+  return colours.BLANK
 
 ## This routine takes a tile argument and puts all the
 ## indicators for power and lightning on it.

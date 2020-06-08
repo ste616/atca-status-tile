@@ -5,16 +5,17 @@
 # the tiles into a CABB block status indicator.
 
 from atca_status_tile import MoniCAPoint, StatusIndicator
+import atca_status_tile.colours as colours
 
 ## Routine to turn a block status into a colour.
 def blockStatusColour(blockStatus=None):
   #print ("DEBUG: the block status is %s" % blockStatus)
   if (blockStatus is not None):
     if (blockStatus == "ONLINE"):
-      return [ ( 0, 255, 0 ) ]
+      return colours.GREEN
     else:
-      return [ ( 255, 0, 0 ) ]
-  return [ ( 0, 0, 0 ) ]
+      return colours.RED
+  return colours.BLANK
 
 ## This routine takes a tile argument and puts all the CABB block
 ## status indicators on it.

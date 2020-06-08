@@ -14,7 +14,7 @@ def antennaStowedParked(servoStatus=None):
     return colours.YELLOW
   if (servoStatus == "PARKED"):
     ## Return orange.
-    return [ ( 255, 165, 0 ) ]
+    return colours.ORANGE
   ## Return blank.
   return colours.BLANK
 
@@ -46,7 +46,7 @@ def antennaError(servoStatus=None):
 def antennaWrap(servoStatus=None):
   if (servoStatus == "SOUTH"):
     ## Return blue.
-    return [ ( 0, 0, 255 ) ]
+    return colours.BLUE
   if (servoStatus == "NORTH"):
     ## Return yellow.
     return colours.YELLOW
@@ -70,13 +70,13 @@ def caobsStatusColour(caobsStatus=None):
     return colours.RED
   if (caobsStatus == "DISABLED"):
     ## Antenna isn't active, turquoise.
-    return [ ( 63, 224, 208 ) ]
+    return colours.TURQUOISE
   if (caobsStatus == "OFF-LINE"):
     ## Antenna isn't connected, orange.
-    return [ ( 255, 165, 0 ) ]
+    return colours.ORANGE
   if (caobsStatus == "IDLE"):
     ## Antenna isn't moving, blue.
-    return [ ( 0, 0, 255 ) ]
+    return colours.BLUE
   
   return colours.BLANK
 
