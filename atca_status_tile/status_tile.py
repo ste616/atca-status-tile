@@ -137,6 +137,14 @@ class StatusTile:
           self.colours[self.indicators[i]["pixels"][j]] = (
             (hue / 360) * 65535, 65535 * saturation,
             brightness * value, temperature )
+      elif len(pixelColours) == len(self.indicators[i]["pixels"]):
+        ## One colour per pixel, we assume they're in the
+        ## same order.
+        for j in range(len(self.indicators[i]["pixels"])):
+          (hue, saturation, value) = rgb2hsv(*pixelColours[j])
+          self.colours[self.indicators[i]["pixels"][j]] = (
+            (hue / 360) * 65535, 65535 * saturation,
+            brightness * value, temperature )
 
     ## Blank out all the pixels that aren't used.
     for i in range(0, len(self.pixelsUsed)):

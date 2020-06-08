@@ -20,7 +20,8 @@ def main():
   atcaTile = lan.get_tilechain_lights()[0]
 
   ## Initialise the tile master.
-  master = TileMaster(lifxTile=atcaTile)
+  master = TileMaster(lifxTile=atcaTile,
+                      refreshTime=2)
   ## Switch on the tiles.
   master.powerOn()
 

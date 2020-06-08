@@ -6,6 +6,7 @@
 
 from atca_status_tile import MoniCAPoint, StatusIndicator
 import atca_status_tile.colours as colours
+import re
 
 ## Routine which returns a colour if the antenna is stowed or parked.
 def antennaStowedParked(servoStatus=None, parentTile=None):
@@ -85,6 +86,63 @@ def caobsStatusColour(caobsStatus=None, parentTile=None):
   
   return colours.BLANK
 
+def degStringToFloat(degString):
+  els = re.split('[Â°\'\"]+', degString)
+  neg = 1
+  if (degString[0] == '-'):
+    neg = -1
+  deg = float(els[0]) * neg
+  minute = float(els[1])
+  sec = float(els[2]) + float(els[3])
+  rv = neg * (deg + minute / 60. + sec / 3600.)
+  return rv
+
+def slewingErrorColour(err):
+  ## Translate a distance in degrees to a colour.
+  if (err > 100):
+    return colours.RED[0]
+  if (err > 20):
+    return colours.ORANGE[0]
+  if (err > 1):
+    return colours.BLUE[0]
+  return colours.GREEN[0]
+
+def positionErrorStatusColour(positionErrors=None, parentTile=None):
+  azError = positionErrors[0]
+  elError = positionErrors[1]
+  rmsError = float(positionErrors[2])
+  servoState = positionErrors[3]
+
+  if (servoState == "SLEWING"):
+    ## The position error is az and el.
+    azDegError = degStringToFloat(azError)
+    elDegError = degStringToFloat(elError)
+    return [ slewingErrorColour(azDegError),
+             slewingErrorColour(elDegError) ]
+  if (servoState == "TRACKING"):
+    ## The position error is from the RMS (in arcsec).
+    if (rmsError > 10):
+      return colours.RED
+    if (rmsError > 2):
+      return colours.ORANGE
+    return colours.GREEN
+
+  return colours.BLANK
+
+def cycleColour(cycleNumber=None, parentTile=None):
+  ## We simply light up each pixel based on its
+  ## binary representation.
+  ncyc = int(cycleNumber.replace("cyc", ""))
+  ## We have 16 pixels to fill.
+  ncycBinary = format(ncyc, 'b').zfill(16)
+  rv = []
+  for i in range(15, -1, -1):
+    if (ncycBinary[i] == "1"):
+      rv.append(colours.WHITE[0])
+    else:
+      rv.append(colours.BLACK[0])
+  return rv
+
 ## This routine takes a tile argument and puts all the
 ## observing indicators on it.
 ## Arguments:
@@ -133,3 +191,33 @@ def observingTile(tile=None, monica=None):
                                     colourFunction=antennaWrap)
     tile.addIndicator(indicator=wrapIndicator,
                       x=xant, y=[ 5 ])
+    ## Seventh and eight rows are the position errors.
+    azimuthErrorPointName = "%s.servo.AzError" % ants[i]
+    elevationErrorPointName = "%s.servo.ElError" % ants[i]
+    rmsErrorPointName = "%s.servo.RMSError" % ants[i]
+    azimuthError = MoniCAPoint(pointName=azimuthErrorPointName,
+                               monicaServer=monica)
+    elevationError = MoniCAPoint(pointName=elevationErrorPointName,
+                                 monicaServer=monica)
+    rmsError = MoniCAPoint(pointName=rmsErrorPointName,
+                           monicaServer=monica)
+    positionErrorIndicator = StatusIndicator(
+      computeFunction=[ azimuthError.getValue, elevationError.getValue,
+                        rmsError.getValue, servoStatus.getValue ],
+      colourFunction=positionErrorStatusColour)
+    tile.addIndicator(indicator=positionErrorIndicator,
+                      x=[ (2 + i), (2 + i) ],
+                      y=[ 6, 7 ])
+    
+  ## The side of the panel is a binary representation of the
+  ## number of cycles on the current scan. The idea is that if it
+  ## gets too high, you may have typed track...
+  cyclePointName = "site.misc.obs.cycleNum"
+  cycleStatus = MoniCAPoint(pointName=cyclePointName, monicaServer=monica)
+  cycleIndicator = StatusIndicator(computeFunction=cycleStatus.getValue,
+                                   colourFunction=cycleColour)
+  tile.addIndicator(indicator=cycleIndicator,
+                    x=[ 0, 1, 0, 1, 0, 1, 0, 1,
+                        0, 1, 0, 1, 0, 1, 0, 1 ],
+                    y=[ 0, 0, 1, 1, 2, 2, 3, 3,
+                        4, 4, 5, 5, 6, 6, 7, 7 ])
