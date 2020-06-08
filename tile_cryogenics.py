@@ -18,6 +18,21 @@ def errorChecker(pointText=None, parentTile=None):
   parentTile.callForAttention()
   return colours.RED
 
+def stateChecker(pointState=None, parentTile=None):
+  ## Checking for problems with the PMON state is also easy.
+  ## Everything is OK if no point reports an error state,
+  ## otherwise we have a problem.
+  errorStateFound = False
+  for i in range(0, len(pointState)):
+    if (pointState[i] == "true"):
+      errorStateFound = True
+  if (errorStateFound):
+    ## Call for attention.
+    parentTile.callForAttention()
+    return colours.RED
+  ## Otherwise we're alright.
+  return colours.GREEN
+
 ## This routine takes a tile argument and puts all the cryogenic
 ## indicators on it.
 ## Arguments:
@@ -47,14 +62,14 @@ def cryogenicsTile(tile=None, monica=None):
     temp4Point = "%s.cryo.CX.Summary" % ants[i]
     temp4Status = MoniCAPoint(pointName=temp4Point, monicaServer=monica)
     temp4Indicator = StatusIndicator(computeFunction=temp4Status.getValue,
-                                      colourFunction=errorChecker)
+                                     colourFunction=errorChecker)
     tile.addIndicator(indicator=temp4Indicator,
                       x=xant, y=[ 2 ])
     ## Fourth row is compressor summary, 16cm system.
     comp4Point = "%s.cryo.compressor.system1.Summary" % ants[i]
     comp4Status = MoniCAPoint(pointName=comp4Point, monicaServer=monica)
     comp4Indicator = StatusIndicator(computeFunction=comp4Status.getValue,
-                                      colourFunction=errorChecker)
+                                     colourFunction=errorChecker)
     tile.addIndicator(indicator=comp4Indicator,
                       x=xant, y=[ 3 ])
     ## Fifth row is thermal summary, 15mm dewar.
@@ -71,3 +86,20 @@ def cryogenicsTile(tile=None, monica=None):
                                       colourFunction=errorChecker)
     tile.addIndicator(indicator=comp15Indicator,
                       x=xant, y=[ 5 ])
+
+    ## The bottom two rows are a composite of all the PMON points.
+    pmonPoints = [ "power_fail", "drive_disabled", "drive_fault",
+                   "cryo_kq", "cryo_cx", "cryo_ls", "over_temp",
+                   "fire", "ups_fault", "mains_fail", "genset_idle",
+                   "estop", "unstowed" ]
+    pmonStatus = []
+    for j in range(0, len(pmonPoints)):
+      pointName = "%s.misc.pmon.%s" % (ants[i], pmonPoints[j])
+      pmonStatus.append(MoniCAPoint(pointName=pointName,
+                                    monicaServer=monica))
+    pmonComputeFunctions = list(map(lambda x: x.getErrorState, pmonStatus))
+    pmonIndicator = StatusIndicator(
+      computeFunction=pmonComputeFunctions,
+      colourFunction=stateChecker)
+    tile.addIndicator(indicator=pmonIndicator,
+                      x=[ xant[0], xant[0] ], y=[ 6, 7 ])

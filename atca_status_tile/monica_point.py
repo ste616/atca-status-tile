@@ -17,3 +17,10 @@ class MoniCAPoint:
         self.monicaServer is not None):
       point = self.monicaServer.getPointByName(self.pointName)
       return point.getValue()
+
+  def getErrorState(self, parentTile=None):
+    if (self.pointName is not None and
+        self.monicaServer is not None):
+      point = self.monicaServer.getPointByName(self.pointName)
+      return point.getErrorState()
+  
