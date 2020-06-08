@@ -5,41 +5,42 @@
 # tiles into an indicator of the observing status.
 
 from atca_status_tile import MoniCAPoint, StatusIndicator
+import atca_status_tile.colours as colours
 
 ## Routine which returns a colour if the antenna is stowed or parked.
 def antennaStowedParked(servoStatus=None):
   if (servoStatus == "STOWED"):
     ## Return yellow.
-    return [ ( 255, 255, 0 ) ]
+    return colours.YELLOW
   if (servoStatus == "PARKED"):
     ## Return orange.
     return [ ( 255, 165, 0 ) ]
   ## Return blank.
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## Routine which returns a colour if the antenna is slewing.
 def antennaSlewing(servoStatus=None):
   if (servoStatus == "SLEWING"):
     ## Return yellow.
-    return [ ( 255, 255, 0 ) ]
+    return colours.YELLOW
   ## Return blank.
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## Routine which returns a colour if the antenna is tracking.
 def antennaTracking(servoStatus=None):
   if (servoStatus == "TRACKING"):
     ## Return green.
-    return [ ( 0, 255, 0 ) ]
+    return colours.GREEN
   ## Return blank.
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## Routine which returns a colour if the antenna has a drive error.
 def antennaError(servoStatus=None):
   if (servoStatus == "DRIVE_ERROR"):
     ## Return red.
-    return [ ( 255, 0, 0 ) ]
+    return colours.RED
   ## Return blank.
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## Routine which returns a colour based on the current antenna wrap.
 def antennaWrap(servoStatus=None):
@@ -48,25 +49,25 @@ def antennaWrap(servoStatus=None):
     return [ ( 0, 0, 255 ) ]
   if (servoStatus == "NORTH"):
     ## Return yellow.
-    return [ ( 255, 255, 0 ) ]
+    return colours.YELLOW
   ## Return blank.
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## Routine to return a colour depending on the status of the servo.
 def caobsStatusColour(caobsStatus=None):
   if ((caobsStatus == "STOWED") or
       (caobsStatus == "PARKED")):
     ## Antenna is stowed, white.
-    return [ ( 255, 255, 255 ) ]
+    return colours.WHITE
   if (caobsStatus == "SLEWING"):
     ## Antenna is slewing, yellow.
-    return [ ( 255, 255, 0 ) ]
+    return colours.YELLOW
   if (caobsStatus == "TRACKING"):
     ## Antenna is tracking, green.
-    return [ ( 0, 255, 0 ) ]
+    return colours.GREEN
   if (caobsStatus == "DRIVE_ERROR"):
     ## Antenna has a drive error, red.
-    return [ ( 255, 0, 0 ) ]
+    return colours.RED
   if (caobsStatus == "DISABLED"):
     ## Antenna isn't active, turquoise.
     return [ ( 63, 224, 208 ) ]
@@ -77,7 +78,7 @@ def caobsStatusColour(caobsStatus=None):
     ## Antenna isn't moving, blue.
     return [ ( 0, 0, 255 ) ]
   
-  return [ ( 0, 0, 0 ) ]
+  return colours.BLANK
 
 ## This routine takes a tile argument and puts all the
 ## observing indicators on it.
