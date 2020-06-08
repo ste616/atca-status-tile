@@ -12,6 +12,7 @@ from atca_status_tile import TileMaster, initialiseServerInstance
 from time import sleep
 from tile_cabb_blocks import cabbBlockTile
 from tile_power_lightning import powerLightningTile
+from tile_observing import observingTile
 
 def main():
   ## Get the tile we want to control.
@@ -33,6 +34,10 @@ def main():
   ## Tile 2: Lightning and power tile.
   tile2 = master.addTile(tileNumber=1)
   powerLightningTile(tile=tile2, monica=server)
+
+  ## Tile 5: Observing status.
+  tile5 = master.addTile(tileNumber=4)
+  observingTile(tile=tile5, monica=server)
   
   ## Sit here and let the master do its work.
   try:
