@@ -12,6 +12,7 @@ from atca_status_tile import TileMaster, initialiseServerInstance
 from time import sleep
 from tile_cabb_blocks import cabbBlockTile
 from tile_power_lightning import powerLightningTile
+from tile_cryogenics import cryogenicsTile
 from tile_observing import observingTile
 
 def main():
@@ -36,6 +37,10 @@ def main():
   tile2 = master.addTile(tileNumber=1)
   powerLightningTile(tile=tile2, monica=server)
 
+  ## Tile 3: Cryogenics.
+  tile3 = master.addTile(tileNumber=2)
+  cryogenicsTile(tile=tile3, monica=server)
+  
   ## Tile 5: Observing status.
   tile5 = master.addTile(tileNumber=4)
   observingTile(tile=tile5, monica=server)

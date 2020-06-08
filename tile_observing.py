@@ -206,7 +206,7 @@ def observingTile(tile=None, monica=None):
                         rmsError.getValue, servoStatus.getValue ],
       colourFunction=positionErrorStatusColour)
     tile.addIndicator(indicator=positionErrorIndicator,
-                      x=[ (2 + i), (2 + i) ],
+                      x=[ xant[0], xant[0] ],
                       y=[ 6, 7 ])
     
   ## The side of the panel is a binary representation of the
