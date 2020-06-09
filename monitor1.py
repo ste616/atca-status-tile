@@ -13,6 +13,7 @@ from time import sleep
 from tile_cabb_blocks import cabbBlockTile
 from tile_power_lightning import powerLightningTile
 from tile_cryogenics import cryogenicsTile
+from tile_weather import weatherTile
 from tile_observing import observingTile
 
 def main():
@@ -40,6 +41,10 @@ def main():
   ## Tile 3: Cryogenics.
   tile3 = master.addTile(tileNumber=2)
   cryogenicsTile(tile=tile3, monica=server)
+
+  ## Tile 4: Weather.
+  tile4 = master.addTile(tileNumber=3)
+  weatherTile(tile=tile4, monica=server)
   
   ## Tile 5: Observing status.
   tile5 = master.addTile(tileNumber=4)

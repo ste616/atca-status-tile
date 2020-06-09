@@ -4,6 +4,7 @@
 # This is a connection to a MoniCA server.
 
 from requests import Session
+import requests
 import json
 
 class monicaPoint:
@@ -104,7 +105,13 @@ class monicaServer:
       postResponse = session.post( url=url, data=data )
     except requests.exceptions.ConnectionError:
       print ("WHY YOU NO CONNECT?")
-    return json.loads(postResponse.text)
+      return None
+    try:
+      rinfo = json.loads(postResponse.text)
+    except json.decoder.JSONDecodeError:
+      print ("Response from MoniCA not JSON this time")
+      rinfo = None
+    return rinfo
 
   def updatePoints(self):
     allPointNames = [ p.getPointName() for p in self.points ]

@@ -132,7 +132,10 @@ def positionErrorStatusColour(positionErrors=None, parentTile=None):
 def cycleColour(cycleNumber=None, parentTile=None):
   ## We simply light up each pixel based on its
   ## binary representation.
-  ncyc = int(cycleNumber.replace("cyc", ""))
+  try:
+    ncyc = int(cycleNumber.replace("cyc", ""))
+  except ValueError:
+    ncyc = 0
   ## We have 16 pixels to fill.
   ncycBinary = format(ncyc, 'b').zfill(16)
   rv = []
