@@ -26,6 +26,36 @@ def vertexTemperatureColour(tempStatus=None, parentTile=None):
     parentTile.callForAttention()
   return rc
 
+def rainColour(rainTips=None, parentTile=None):
+  ## Just turn the number of tips into a binary number.
+  try:
+    ntips = int(rainTips)
+  except ValueError:
+    ntips = 0
+  ## We have 8 pixels to fill.
+  ntipsBinary = format(ntips, 'b').zfill(8)
+  rv = []
+  for i in range(7, -1, -1):
+    if (ntipsBinary[i] == "1"):
+      rv.append(colours.BLUE[0])
+    else:
+      rv.append(colours.BLACK[0])
+  return rv
+
+def softWindColour(windState=None, parentTile=None):
+  ## Is the wind-stow triggered?
+  if (windState == "true"):
+    parentTile.callForAttention()
+    return colours.RED
+  return colours.GREEN
+
+def pmonWindColour(windState=None, parentTile=None):
+  ## Is the wind-stow triggered?
+  if (windState == "OK"):
+    return colours.GREEN
+  parentTile.callForAttention()
+  return colours.RED
+
 ## This routine takes a tile argument and puts all the weather
 ## indicators on it.
 ## Arguments:
@@ -55,4 +85,34 @@ def weatherTile(tile=None, monica=None):
       colourFunction=vertexTemperatureColour)
     tile.addIndicator(indicator=vertexIndicator,
                       x=xant, y=[ 4, 5 ])
-    
+  ## On the left side of these bottom rows is a binary
+  ## representation of tips of the rain gauge, filling up from
+  ## the bottom.
+  rainPointName = "site.environment.weather.RainTips"
+  rainStatus = MoniCAPoint(pointName=rainPointName,
+                           monicaServer=monica)
+  rainIndicator = StatusIndicator(
+    computeFunction=rainStatus.getValue,
+    colourFunction=rainColour)
+  tile.addIndicator(indicator=rainIndicator,
+                    x=[ 0, 1, 0, 1, 0, 1, 0, 1 ],
+                    y=[ 7, 7, 6, 6, 5, 5, 4, 4 ])
+                        
+  ## On the top left is the software and PMON wind-stow indicators.
+  softWindName = "site.environment.weather.WindStowAlert"
+  softWindStatus = MoniCAPoint(pointName=softWindName,
+                               monicaServer=monica)
+  softWindIndicator = StatusIndicator(
+    computeFunction=softWindStatus.getValue,
+    colourFunction=softWindColour)
+  tile.addIndicator(indicator=softWindIndicator,
+                    x=[ 0, 0 ], y=[ 0, 1 ])
+  pmonWindName = "ca.misc.pmon.pmon_autostow"
+  pmonWindStatus = MoniCAPoint(pointName=pmonWindName,
+                               monicaServer=monica)
+  pmonWindIndicator = StatusIndicator(
+    computeFunction=pmonWindStatus.getValue,
+    colourFunction=pmonWindColour)
+  tile.addIndicator(indicator=pmonWindIndicator,
+                    x=[ 0, 0 ], y=[ 2, 3 ])
+  
