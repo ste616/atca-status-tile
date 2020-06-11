@@ -52,11 +52,14 @@ class monicaPoint:
 
   def setSeries(self, values=None):
     ## Fill this in when we know how to do this.
-    print(values)
+    self.timeValue = [ a[0] for a in values ]
+    self.value = [ a[1] for a in values ]
+    self.errorState = [ a[2] for a in values ]
     return self
   
   def getSeries(self):
-    return { "times": self.timeValue, "values": self.value }
+    return { "times": self.timeValue, "values": self.value,
+             "errorStates": self.errorState }
 
   def setDescription(self, description=None):
     if description is not None:
@@ -80,7 +83,11 @@ class monicaPoint:
     return self
 
   def getErrorState(self):
-    return self.errorState
+    if self.timeSeries == False:
+      return self.errorState
+    else:
+      ## We can return just the last value.
+      return self.errorState[-1]
 
   def setTimeSeries(self, isTimeSeries=False):
     if (isTimeSeries == True):
@@ -131,9 +138,13 @@ class monicaServer:
     if "webserverPath" in info:
       self.webserverPath = info['webserverPath']
 
-  def addPoint(self, pointName=None):
+  def addPoint(self, pointName=None, isTimeSeries=False,
+               startTime=None, interval=None):
     if pointName is not None:
-      npoint = monicaPoint({ 'pointName': pointName })
+      npoint = monicaPoint({ 'pointName': pointName,
+                             'isTimeSeries': isTimeSeries,
+                             'startTime': startTime,
+                             'interval': interval })
       self.points.append(npoint)
     return self
   
@@ -145,9 +156,11 @@ class monicaServer:
 
   def addTimeSeries(self, pointName=None, interval=None, startTime=None):
     if pointName is not None and interval is not None:
+      print("adding time series for %s" % pointName)
       nseries = monicaPoint({ 'pointName': pointName,
                               'interval': interval,
-                              'startTime': startTime })
+                              'startTime': startTime,
+                              'isTimeSeries': True })
       self.points.append(nseries)
     return self
   
@@ -215,11 +228,14 @@ class monicaServer:
     ## And now get the time series data.
     data = { 'action': "intervals", 'server': self.serverName,
              'points': ";".join(allSeriesNames) }
+    ##print("time series")
+    ##print(data)
     response = self.__comms(data)
+    ##print(response)
     if response is not None and "intervalData" in response:
       for i in range(0, len(response['intervalData'])):
         if response['intervalData'][i]['name'] is not None:
-          series = self.getSeriesByName(response['intervalData'][i]['name'])
+          series = self.getTimeSeriesByName(response['intervalData'][i]['name'])
           point.setSeries(response['intervalData'][i]['data'])
       success = True
     return success

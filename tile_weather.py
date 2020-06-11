@@ -56,6 +56,15 @@ def pmonWindColour(windState=None, parentTile=None):
   parentTile.callForAttention()
   return colours.RED
 
+def siteWindColour(windSeries=None, parentTile=None):
+  ## We have 7 columns of 4 pixels height to fill.
+  ## The most recent wind is in the early part of the
+  ## array we return, and each time needs four pixels.
+  ## Low wind values have earlier pixels lit.
+  pixelValues = [ colours.BLANK[0] ] * 28
+  print(windSeries['times'])
+  return pixelValues
+
 ## This routine takes a tile argument and puts all the weather
 ## indicators on it.
 ## Arguments:
@@ -116,3 +125,21 @@ def weatherTile(tile=None, monica=None):
   tile.addIndicator(indicator=pmonWindIndicator,
                     x=[ 0, 0 ], y=[ 2, 3 ])
   
+  ## The time series of the wind speed are shown at the top
+  ## right.
+  siteWindName = "site.environment.weather.WindSpeed"
+  siteWindStatus = MoniCAPoint(pointName=siteWindName,
+                               monicaServer=monica,
+                               isTimeSeries=True,
+                               startTime=-1,
+                               interval=30)
+  siteWindIndicator = StatusIndicator(
+    computeFunction=siteWindStatus.getSeries,
+    colourFunction=siteWindColour)
+  tile.addIndicator(indicator=siteWindIndicator,
+                    x=[ 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5,
+                        4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2,
+                        1, 1, 1, 1 ],
+                    y=[ 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0,
+                        3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0,
+                        3, 2, 1, 0 ])

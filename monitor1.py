@@ -23,7 +23,7 @@ def main():
 
   ## Initialise the tile master.
   master = TileMaster(lifxTile=atcaTile,
-                      refreshTime=2)
+                      refreshTime=10)
   ## Switch on the tiles.
   master.powerOn()
 

@@ -5,12 +5,18 @@
 # management and value queries of a MoniCA point.
 
 class MoniCAPoint:
-  def __init__(self, pointName=None, monicaServer=None):
+  def __init__(self, pointName=None, monicaServer=None,
+               isTimeSeries=False, startTime=None, interval=None):
     self.pointName = pointName
     self.monicaServer = monicaServer
     if (self.pointName is not None and
         self.monicaServer is not None):
-      self.monicaServer.addPoint(pointName=self.pointName)
+      if (isTimeSeries == False):
+        self.monicaServer.addPoint(pointName=self.pointName)
+      else:
+        self.monicaServer.addTimeSeries(pointName=self.pointName,
+                                        interval=interval,
+                                        startTime=startTime)
 
   def getValue(self, parentTile=None):
     if (self.pointName is not None and
@@ -18,6 +24,12 @@ class MoniCAPoint:
       point = self.monicaServer.getPointByName(self.pointName)
       return point.getValue()
 
+  def getSeries(self, parentTile=None):
+    if (self.pointName is not None and
+        self.monicaServer is not None):
+      series = self.monicaServer.getTimeSeriesByName(self.pointName)
+      return series.getSeries()
+    
   def getErrorState(self, parentTile=None):
     if (self.pointName is not None and
         self.monicaServer is not None):
